@@ -4,10 +4,10 @@ import java.io.FileNotFoundException;
         
 public class Search {
 
-  private static String keyword;
-  private static boolean searchForSubString;
+  private String keyword;
+  private boolean searchForSubString;
 
-  private static void preprocessKeyword() {
+  private void preprocessKeyword() {
     /* Remove single quotes only on word boundary */
     keyword = keyword.replaceAll("' | '", " ");
     keyword = keyword.replaceAll("^'|'$", "");
@@ -17,7 +17,7 @@ public class Search {
     keyword = keyword.replaceAll("[^\'a-zA-Z0-9 ]", "");
   }
 
-  private static String preprocessText(String text) {
+  private String preprocessText(String text) {
     /* Remove single quotes only on word boundary */
     text = text.replaceAll("' | '", " ");
     text = text.replaceAll("^'|'$", "");
@@ -26,7 +26,7 @@ public class Search {
     return text;
   }
 
-  private static boolean findKeyword(String text) {
+  private boolean findKeyword(String text) {
     /* Preprocess text */
     text = preprocessText(text);
   
@@ -50,7 +50,7 @@ public class Search {
 
   /* For Junit Test purpose */
   /* Search for word in text */
-  public static boolean test(String text, String word) {
+  public boolean test(String text, String word) {
     if (word.startsWith("\"") && word.endsWith("\"")) {
         searchForSubString = false;
       } else {
@@ -65,13 +65,8 @@ public class Search {
     return findKeyword(text);
   }
 
-  public static void main(String[] args) throws FileNotFoundException{
-    if (args.length != 2) {
-      System.err.println("Expecting filepath and search keyword as input via commandline");
-      return; 
-    }
-
-    File file = new File(args[0]);
+  private void search(String filename, String word) throws FileNotFoundException {
+    File file = new File(filename);
     Scanner sc = new Scanner(file);
     /* Using '. ' as delimiter */
     sc.useDelimiter("\\. |\\n");
@@ -81,7 +76,7 @@ public class Search {
      * wants exact keyword match, not substring matches. Thus,
      * set searchForSubString to false
      */
-    keyword = args[1]; 
+    keyword = word;
     if (keyword.startsWith("\"") && keyword.endsWith("\"")) {
       searchForSubString = false;
     } else {
@@ -110,4 +105,15 @@ public class Search {
     }
     sc.close();
   }
+
+  public static void main(String[] args) throws FileNotFoundException {
+    if (args.length != 2) {
+      System.err.println("Expecting filepath and search keyword as input via commandline");
+      return; 
+    }
+
+    Search searchObj = new Search();
+    searchObj.search(args[0],args[1]);
+
+  }   
 }
